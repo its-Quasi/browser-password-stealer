@@ -6,7 +6,7 @@ import sqlite3
 from datetime import datetime, timedelta
 
 from Crypto.Cipher import AES
-#from win32crypt import CryptUnprotectData
+from win32crypt import CryptUnprotectData
 
 appdata = os.getenv('LOCALAPPDATA')
 print(appdata)
