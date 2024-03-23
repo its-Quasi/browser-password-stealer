@@ -1,13 +1,7 @@
 # Browser-password-stealer
-This python program gets all the saved passwords, credit cards and bookmarks from chromium based browsers supports chromium 80 and above!
+This python program gets all the saved passwords, credit cards and bookmarks from chromium based browsers supports chromium
 
-# 📎Modules Required
-To install all the required modules use the following code:
-<br/>
-<b>pip install -r requirements.txt</b>
-
-# Supported browsers
-## Chromium Based Browsers
+# Supported browsers [Chromium Based Browsers]
     ✔ AVAST Browser
     ✔ Amigo
     ✔ Torch
@@ -26,15 +20,19 @@ To install all the required modules use the following code:
     ✔ Brave
     ✔ Iridium
 
-
-# 💡Copyrights © [Henry Richard J](https://github.com/henry-richard7)
-
 # Install Required Python Packages
-pip install -r requirements.txt
+```pip install -r requirements.txt```
 
 # How to Use
-Just run this **chromium_based_browsers.py** the code will create a folder based on the browser name and stores the saved passwords, credit cards and bookmarks in that folder.
+Just run
+```python chromium_based_browsers.py```
+or
+```python3 chromium_based_browsers.py```
+
+The code will create a folder based on the browser name and stores the saved passwords, credit cards and bookmarks in that folder.
+
+# Note
+this script only works on windows
 
 # 💡Copyrights © [Henry Richard J](https://github.com/henry-richard7)
-
 #### Star the Repo in case you liked it :)
